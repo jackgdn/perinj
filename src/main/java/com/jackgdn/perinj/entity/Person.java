@@ -16,9 +16,10 @@ public class Person {
     private String dateOfBirth;
     private List<String> phoneNumbers;
     private List<String> emailAddresses;
-    private String studentId;
-    private String ID;
+    private String qq;
+    private String studentID;
+    private String id;
     private String address;
     private List<PasswordSet> passwordSets;
-    private List<Map<String, String>> otherInformation;
+    private Map<String, String> otherInformation;
 }

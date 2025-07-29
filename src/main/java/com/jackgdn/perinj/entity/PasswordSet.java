@@ -7,5 +7,5 @@ public class PasswordSet {
     private String site;
     private String username;
     private String password;
-    private String expiredPassword;
+    private Boolean expired;
 }

@@ -1,14 +1,14 @@
 package com.jackgdn.perinj.entity.dto;
 
-import java.util.List;
+import java.util.Map;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class PasswordSetDTO {
+public class OtherInformationDTO {
     @NotBlank
     private String name;
     @NotBlank
-    private List<PasswordSetSubDTO> passwordSets;
+    private Map<String, String> otherInformation;
 }
