@@ -9,6 +9,5 @@ import lombok.Data;
 public class PasswordSetDTO {
     @NotBlank
     private String name;
-    @NotBlank
     private List<PasswordSetSubDTO> passwordSets;
 }

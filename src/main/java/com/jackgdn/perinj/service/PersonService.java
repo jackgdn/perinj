@@ -1,6 +1,7 @@
 package com.jackgdn.perinj.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -28,6 +29,10 @@ public class PersonService {
     }
 
     public Person addPerson(PersonDTO personDto) {
+        perinjRepository.findById(personDto.getName())
+                .ifPresent(person -> {
+                    throw new RuntimeException("Person already exists with name: " + personDto.getName());
+                });
         Person personEntity = new Person();
         BeanUtils.copyProperties(personDto, personEntity);
         return perinjRepository.save(personEntity);
@@ -51,14 +56,16 @@ public class PersonService {
         Person personEntity = perinjRepository.findById(passwordSetDto.getName())
                 .orElseThrow(
                         () -> new RuntimeException("Person not found with name: " + passwordSetDto.getName()));
-        personEntity.getPasswordSets().addAll(passwordSetDto.getPasswordSets()
-                .stream()
-                .map(passwordSetSubDto -> {
-                    PasswordSet passwordSet = new PasswordSet();
-                    BeanUtils.copyProperties(passwordSetSubDto, passwordSet);
-                    return passwordSet;
-                })
-                .collect(Collectors.toList()));
+        personEntity.getPasswordSets()
+                .addAll(Optional.ofNullable(passwordSetDto.getPasswordSets()
+                        .stream()
+                        .map(passwordSetSubDto -> {
+                            PasswordSet passwordSet = new PasswordSet();
+                            BeanUtils.copyProperties(passwordSetSubDto, passwordSet);
+                            return passwordSet;
+                        })
+                        .collect(Collectors.toList()))
+                        .orElse(List.of()));
         return perinjRepository.save(personEntity);
     }
 
@@ -66,7 +73,8 @@ public class PersonService {
         Person personEntity = perinjRepository.findById(otherInformationDTO.getName())
                 .orElseThrow(
                         () -> new RuntimeException("Person not found with name: " + otherInformationDTO.getName()));
-        personEntity.getOtherInformation().putAll(otherInformationDTO.getOtherInformation());
+        personEntity.getOtherInformation()
+                .putAll(Optional.ofNullable(otherInformationDTO.getOtherInformation()).orElse(Map.of()));
         return perinjRepository.save(personEntity);
     }
 

@@ -9,6 +9,5 @@ import lombok.Data;
 public class OtherInformationDTO {
     @NotBlank
     private String name;
-    @NotBlank
     private Map<String, String> otherInformation;
 }
