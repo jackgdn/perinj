@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jackgdn.perinj.entity.Person;
 import com.jackgdn.perinj.entity.dto.OtherInformationDTO;
-import com.jackgdn.perinj.entity.dto.PasswordSetDTO;
+import com.jackgdn.perinj.entity.dto.PasswordSetsDTO;
 import com.jackgdn.perinj.entity.dto.PersonDTO;
 import com.jackgdn.perinj.service.PersonService;
 
@@ -31,9 +31,9 @@ public class PersonController {
         return personService.updatePerson(personDto);
     }
 
-    @PutMapping("/updatepasswordset")
-    public Person updatePersonSet(@Validated @RequestBody PasswordSetDTO passwordSetDto) {
-        return personService.updatePasswordSet(passwordSetDto);
+    @PutMapping("/updatepasswordsets")
+    public Person updatePersonSets(@Validated @RequestBody PasswordSetsDTO passwordSetDto) {
+        return personService.updatePasswordSets(passwordSetDto);
     }
 
     @PutMapping("/updateotherinformation")

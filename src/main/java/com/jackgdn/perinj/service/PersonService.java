@@ -1,8 +1,8 @@
 package com.jackgdn.perinj.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -10,10 +10,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jackgdn.perinj.entity.Information;
 import com.jackgdn.perinj.entity.PasswordSet;
 import com.jackgdn.perinj.entity.Person;
 import com.jackgdn.perinj.entity.dto.OtherInformationDTO;
-import com.jackgdn.perinj.entity.dto.PasswordSetDTO;
+import com.jackgdn.perinj.entity.dto.PasswordSetsDTO;
 import com.jackgdn.perinj.entity.dto.PersonDTO;
 import com.jackgdn.perinj.repository.PerinjRepository;
 
@@ -28,6 +29,10 @@ public class PersonService {
         }
     }
 
+    private void SetNonNullList(Consumer<List<String>> setter, List<String> value) {
+        setter.accept((value == null) ? List.of() : value);
+    }
+
     public Person addPerson(PersonDTO personDto) {
         perinjRepository.findById(personDto.getName())
                 .ifPresent(person -> {
@@ -35,6 +40,8 @@ public class PersonService {
                 });
         Person personEntity = new Person();
         BeanUtils.copyProperties(personDto, personEntity);
+        SetNonNullList(personEntity::setPhoneNumbers, personDto.getPhoneNumbers());
+        SetNonNullList(personEntity::setEmailAddresses, personDto.getEmailAddresses());
         return perinjRepository.save(personEntity);
     }
 
@@ -52,29 +59,37 @@ public class PersonService {
         return perinjRepository.save(personEntity);
     }
 
-    public Person updatePasswordSet(PasswordSetDTO passwordSetDto) {
-        Person personEntity = perinjRepository.findById(passwordSetDto.getName())
+    public Person updatePasswordSets(PasswordSetsDTO passwordSetsDto) {
+        Person personEntity = perinjRepository.findById(passwordSetsDto.getName())
                 .orElseThrow(
-                        () -> new RuntimeException("Person not found with name: " + passwordSetDto.getName()));
+                        () -> new RuntimeException("Person not found with name: " + passwordSetsDto.getName()));
         personEntity.getPasswordSets()
-                .addAll(Optional.ofNullable(passwordSetDto.getPasswordSets()
+                .addAll(Optional.ofNullable(passwordSetsDto.getPasswordSets()
                         .stream()
-                        .map(passwordSetSubDto -> {
-                            PasswordSet passwordSet = new PasswordSet();
-                            BeanUtils.copyProperties(passwordSetSubDto, passwordSet);
-                            return passwordSet;
+                        .map(passwordSetDto -> {
+                            PasswordSet passwordSetEntity = new PasswordSet();
+                            BeanUtils.copyProperties(passwordSetDto, passwordSetEntity);
+                            return passwordSetEntity;
                         })
                         .collect(Collectors.toList()))
                         .orElse(List.of()));
         return perinjRepository.save(personEntity);
     }
 
-    public Person updateOtherInformation(OtherInformationDTO otherInformationDTO) {
-        Person personEntity = perinjRepository.findById(otherInformationDTO.getName())
+    public Person updateOtherInformation(OtherInformationDTO otherInformationDto) {
+        Person personEntity = perinjRepository.findById(otherInformationDto.getName())
                 .orElseThrow(
-                        () -> new RuntimeException("Person not found with name: " + otherInformationDTO.getName()));
+                        () -> new RuntimeException("Person not found with name: " + otherInformationDto.getName()));
         personEntity.getOtherInformation()
-                .putAll(Optional.ofNullable(otherInformationDTO.getOtherInformation()).orElse(Map.of()));
+                .addAll(Optional.ofNullable(otherInformationDto.getOtherInformation()
+                        .stream()
+                        .map(InformationDto -> {
+                            Information informationEntity = new Information();
+                            BeanUtils.copyProperties(InformationDto, informationEntity);
+                            return informationEntity;
+                        })
+                        .collect(Collectors.toList()))
+                        .orElse(List.of()));
         return perinjRepository.save(personEntity);
     }
 

@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class OtherInformationDTO {
+public class PasswordSetsDTO {
     @NotBlank
     private String name;
-    private List<InformationDTO> otherInformation;
+    private List<PasswordSetDTO> passwordSets;
 }
