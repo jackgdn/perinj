@@ -2,7 +2,6 @@ package com.jackgdn.perinj.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,9 @@ import org.springframework.stereotype.Service;
 import com.jackgdn.perinj.entity.Information;
 import com.jackgdn.perinj.entity.PasswordSet;
 import com.jackgdn.perinj.entity.Person;
+import com.jackgdn.perinj.entity.dto.InformationDTO;
 import com.jackgdn.perinj.entity.dto.OtherInformationDTO;
+import com.jackgdn.perinj.entity.dto.PasswordSetDTO;
 import com.jackgdn.perinj.entity.dto.PasswordSetsDTO;
 import com.jackgdn.perinj.entity.dto.PersonDTO;
 import com.jackgdn.perinj.repository.PerinjRepository;
@@ -97,6 +98,40 @@ public class PersonService {
         return perinjRepository.findById(name)
                 .orElseThrow(
                         () -> new RuntimeException("Person not found with name: " + name));
+    }
+
+    public PasswordSetsDTO getPasswordSets(String name) {
+        Person person = perinjRepository.findById(name)
+                .orElseThrow(
+                        () -> new RuntimeException("Person not found with name: " + name));
+        PasswordSetsDTO passwordSetsDto = new PasswordSetsDTO();
+        passwordSetsDto.setName(name);
+        passwordSetsDto.setPasswordSets(person.getPasswordSets()
+                .stream()
+                .map(passwordSetEntity -> {
+                    PasswordSetDTO passwordSetDto = new PasswordSetDTO();
+                    BeanUtils.copyProperties(passwordSetEntity, passwordSetDto);
+                    return passwordSetDto;
+                })
+                .collect(Collectors.toList()));
+        return passwordSetsDto;
+    }
+
+    public OtherInformationDTO getOtherInformation(String name) {
+        Person person = perinjRepository.findById(name)
+                .orElseThrow(
+                        () -> new RuntimeException("Person not found with name: " + name));
+        OtherInformationDTO otherInformationDto = new OtherInformationDTO();
+        otherInformationDto.setName(name);
+        otherInformationDto.setOtherInformation(person.getOtherInformation()
+                .stream()
+                .map(informationEntity -> {
+                    InformationDTO informationDto = new InformationDTO();
+                    BeanUtils.copyProperties(informationEntity, informationDto);
+                    return informationDto;
+                })
+                .collect(Collectors.toList()));
+        return otherInformationDto;
     }
 
 }

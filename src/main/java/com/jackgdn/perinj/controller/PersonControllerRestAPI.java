@@ -17,7 +17,7 @@ import com.jackgdn.perinj.service.PersonService;
 
 @RestController
 @RequestMapping("/")
-public class PersonController {
+public class PersonControllerRestAPI {
     @Autowired
     PersonService personService;
 
@@ -46,4 +46,13 @@ public class PersonController {
         return personService.getPerson(name);
     }
 
+    @GetMapping("/getpasswordsets")
+    public PasswordSetsDTO getPasswordSets(@RequestBody String name) {
+        return personService.getPasswordSets(name);
+    }
+
+    @GetMapping("/getotherinformation")
+    public OtherInformationDTO getOtherInformation(@RequestBody String name) {
+        return personService.getOtherInformation(name);
+    }
 }
